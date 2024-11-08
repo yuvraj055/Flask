@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Security Audit Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .audit-section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .audit-section.collapsible {
+            cursor: pointer;
+            padding: 15px;
+            font-weight: bold;
+        }
+        .audit-section.collapsible:hover {
+            background-color: #e0e0e0;
+        }
+        .audit-content {
+            padding: 10px;
+            display: none;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .status.pass {
+            color: green;
+        }
+        .status.fail {
+            color: red;
+        }
+        .progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            height: 25px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .download-button {
+            background-color: #2196F3;
+            margin-top: 10px;
+        }
+        .download-button:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>System Security Audit Dashboard</h1>
+
+    <!-- Progress bar showing completion percentage -->
+    <div class="progress-bar">
+        <div class="progress-bar-fill" id="progressBarFill">0%</div>
+    </div>
+
+    <form method="POST">
+        <button type="submit">Run Audit</button>
+    </form>
+
+    {% if audit %}
+    <div class="audit-section collapsible">Firewall Status</div>
+    <div class="audit-content">
+        <p><span class="status pass">Passed</span></p>
+        <pre>{{ audit['firewall_status'] }}</pre>
+    </div>
+
+    <div class="audit-section collapsible">Antivirus Status</div>
+    <div class="audit-content">
+        <p><span class="status pass">Passed</span></p>
+        <pre>{{ audit['antivirus_status'] }}</pre>
+    </div>
+
+    <div class="audit-section collapsible">Windows Update Status</div>
+    <div class="audit-content">
+        <p><span class="status fail">Failed</span></p>
+        <pre>{{ audit['windows_update_status'] }}</pre>
+    </div>
+
+    <div class="audit-section collapsible">Admin Status</div>
+    <div class="audit-content">
+        <p><span class="status pass">Passed</span></p>
+        <pre>{{ audit['admin_status'] }}</pre>
+    </div>
+
+    <div class="audit-section collapsible">Audit Policy</div>
+    <div class="audit-content">
+        <p><span class="status pass">Passed</span></p>
+        <pre>{{ audit['audit_policy'] }}</pre>
+    </div>
+
+    <div class="audit-section collapsible">Installed Patches</div>
+    <div class="audit-content">
+        <p><span class="status pass">Passed</span></p>
+        <pre>{{ audit['installed_patches'] }}</pre>
+    </div>
+
+    <div class="audit-section collapsible">Account Lockout Policy</div>
+    <div class="audit-content">
+        <p><span class="status pass">Passed</span></p>
+        <pre>{{ audit['account_lockout_policy'] }}</pre>
+    </div>
+
+    <a href="/download_report">
+        <button class="download-button">Download PDF Report</button>
+    </a>
+    {% endif %}
+
+    <script>
+        // Progress Bar Logic
+        var auditSections = document.querySelectorAll('.audit-section');
+        var totalSections = auditSections.length;
+        var completedSections = 0;
+
+        auditSections.forEach(function(section, index) {
+            section.addEventListener('click', function() {
+                var content = this.nextElementSibling;
+                if (content.style.display === 'block') {
+                    content.style.display = 'none';
+                    completedSections--;
+                } else {
+                    content.style.display = 'block';
+                    completedSections++;
+                }
+                // Update the progress bar
+                var progress = Math.round((completedSections / totalSections) * 100);
+                document.getElementById('progressBarFill').style.width = progress + '%';
+                document.getElementById('progressBarFill').textContent = progress + '%';
+            });
+        });
+    </script>
+
+</body>
+</html>
